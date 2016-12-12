@@ -36,11 +36,11 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_ALUMNE_MAIL = "mail";
 
     //Taula Assignatura Columnes
-    private static final String KEY_ASSIGNATURA_ID = "idAssignatura";
+    public static final String KEY_ASSIGNATURA_ID = "idAssignatura";
     public static final String KEY_ASSIGNATURA_SIGLES = "sigles";
-    private static final String KEY_ASSIGNATURA_NOM = "nom";
-    private static final String KEY_ASSIGNATURA_AULA = "aula";
-    private static final String KEY_ASSIGNATURA_TEXT = "text";
+    public static final String KEY_ASSIGNATURA_NOM = "nom";
+    public static final String KEY_ASSIGNATURA_AULA = "aula";
+    public static final String KEY_ASSIGNATURA_TEXT = "text";
 
     //Taula Dia Columnes
     private static final String KEY_DIA_ID = "data";
