@@ -2,9 +2,6 @@ package team.capcios.passarllista;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -115,6 +112,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createAdapter() {
+        dadesDatabaseHelper.poblar_assignatures();
         listCursor = dadesDatabaseHelper.getAssignaturesCursor();
         listView = (ListView) findViewById(R.id.ListView);
         ListCursorAdapter listCursorAdapter = new ListCursorAdapter(this, listCursor);

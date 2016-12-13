@@ -6,7 +6,8 @@ import java.util.List;
 /**
  * Created by ALEJANDRO on 23/11/2016.
  */
-public class Classe {
+public class Assignatura {
+    private String id;
     private String nom;
     private String sigles;
     private String aula;
@@ -14,14 +15,14 @@ public class Classe {
     // private Array de Dies de la setmana que s'imparteix la assignatura.
 
 
-    public Classe() {
+    public Assignatura() {
         this.nom = "";
         this.sigles = "";
         this.aula = "";
         this.alumnes = new ArrayList<>();
     }
 
-    public Classe(String nom, String sigles, String aula) {
+    public Assignatura(String nom, String sigles, String aula) {
         this.nom = nom;
         this.sigles = sigles;
         this.aula = aula;
@@ -42,5 +43,21 @@ public class Classe {
 
     public void setAlumnes(List<Alumne> alumnes) {
         this.alumnes = alumnes;
+    }
+
+    public String getAula() {
+        return aula;
+    }
+
+    public void setAula(String aula) {
+        this.aula = aula;
+    }
+
+    public String getSigles() {
+        return sigles;
+    }
+
+    public void setSigles(String sigles) {
+        this.sigles = sigles;
     }
 }

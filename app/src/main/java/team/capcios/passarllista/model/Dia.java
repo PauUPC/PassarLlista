@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 /**
  * Created by ALEJANDRO on 23/11/2016.
  */
 public class Dia {
     private Date date;
-    private List<Classe> classes;
+    private List<Assignatura> classes;
 
     public Dia(Date date) {
         this.date = date;
         classes = new ArrayList<>();
     }
 
-    public void addClasse(Classe classe){
+    public void addClasse(Assignatura classe){
         classes.add(classe);
     }
 
@@ -24,7 +25,7 @@ public class Dia {
         return date;
     }
 
-    public List<Classe> getClasses() {
+    public List<Assignatura> getClasses() {
         return classes;
     }
 }
