@@ -11,19 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import team.capcios.passarllista.model.Alumne;
+import team.capcios.passarllista.model.Assignatura;
 
-/**
- * Created by ALEJANDRO on 29/11/2016.
- */
 public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 6;
 
     //Table Names
-    public static final String TAULA_ALUMNE = "Alumne";
-    public static final String TAULA_ASSIGNATURA = "Assignatura";
+    private static final String TAULA_ALUMNE = "Alumne";
+    private static final String TAULA_ASSIGNATURA = "Assignatura";
     private static final String TAULA_DIA = "Dia";
     private static final String TAULA_MATRICULATS = "Matriculats";
     private static final String TAULA_IMPARTEIX = "Imparteix";
@@ -32,15 +30,15 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     //Taula Alumne Columnes
     private static final String KEY_ALUMNE_ID = "idAlumne";
-    public static final String KEY_ALUMNE_NOM = "nom";
+    private static final String KEY_ALUMNE_NOM = "nom";
     private static final String KEY_ALUMNE_MAIL = "mail";
 
     //Taula Assignatura Columnes
-    public static final String KEY_ASSIGNATURA_ID = "idAssignatura";
+    private static final String KEY_ASSIGNATURA_ID = "idAssignatura";
     public static final String KEY_ASSIGNATURA_SIGLES = "sigles";
-    public static final String KEY_ASSIGNATURA_NOM = "nom";
-    public static final String KEY_ASSIGNATURA_AULA = "aula";
-    public static final String KEY_ASSIGNATURA_TEXT = "text";
+    private static final String KEY_ASSIGNATURA_NOM = "nom";
+    private static final String KEY_ASSIGNATURA_AULA = "aula";
+    private static final String KEY_ASSIGNATURA_TEXT = "text";
 
     //Taula Dia Columnes
     private static final String KEY_DIA_ID = "data";
@@ -62,15 +60,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_APUNTAT_IDASSIGNATURA = "idAssignatura";
     private static final String KEY_APUNTAT_IDDIA = "idDia";
 
-    //Patró Singleton
-    private static DadesDatabaseHelper sInstance;
-    public static synchronized DadesDatabaseHelper getInstance(Context context) {
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context.
-        if (sInstance == null)
-            sInstance = new DadesDatabaseHelper(context.getApplicationContext());
-        return sInstance;
-    }
+
 
     public DadesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -88,57 +78,65 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void poblar_assignatures() {
+        for (int i=0; i<10; i++){
+            Assignatura assignatura = new Assignatura("Assignatura"+String.valueOf(i),"CL-"+String.valueOf(i),"A0"+String.valueOf(i));
+            addAssignatura(assignatura);
+        }
+    }
+
     private void create_all_tables(SQLiteDatabase db) {
         String CREATE_ALUMNE_TABLE = "CREATE TABLE " + TAULA_ALUMNE +
                 "(" +
-                        KEY_ALUMNE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        KEY_ALUMNE_NOM + " TEXT NOT NULL," +
-                        KEY_ALUMNE_MAIL + " TEXT NOT NULL" +
+                KEY_ALUMNE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                KEY_ALUMNE_NOM + " TEXT NOT NULL," +
+                KEY_ALUMNE_MAIL + " TEXT NOT NULL" +
                 ")";
 
         String CREATE_APUNTAT_TABLE = "CREATE TABLE " + TAULA_APUNTAT +
                 "(" +
-                        KEY_APUNTAT_IDALUMNE + " INTEGER NOT NULL," +
-                        KEY_APUNTAT_IDASSIGNATURA + " INTEGER NOT NULL," +
-                        KEY_APUNTAT_IDDIA + " DATE NOT NULL," +
-                        " CONSTRAINT Apuntat_idAlumne_idDia_idAssignatura_pk PRIMARY KEY (" + KEY_APUNTAT_IDALUMNE + ", " + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ")," +
-                        " CONSTRAINT Apuntat_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_APUNTAT_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + "(" + KEY_ALUMNE_ID +")," +
-                        " CONSTRAINT Apuntat_LlistaAssistencia_idDia_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_LLISTA_ASSISTENCIA + " (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ", " + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ")" +
+                KEY_APUNTAT_IDALUMNE + " INTEGER NOT NULL," +
+                KEY_APUNTAT_IDASSIGNATURA + " INTEGER NOT NULL," +
+                KEY_APUNTAT_IDDIA + " DATE NOT NULL," +
+                " CONSTRAINT Apuntat_idAlumne_idDia_idAssignatura_pk PRIMARY KEY (" + KEY_APUNTAT_IDALUMNE + ", " + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ")," +
+                " CONSTRAINT Apuntat_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_APUNTAT_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + "(" + KEY_ALUMNE_ID +")," +
+                " CONSTRAINT Apuntat_LlistaAssistencia_idDia_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_LLISTA_ASSISTENCIA + " (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ", " + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ")" +
                 ")";
         String CREATE_ASSIGNATURA_TABLE = "CREATE TABLE " + TAULA_ASSIGNATURA +
                 "(" +
-                        KEY_ASSIGNATURA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                        KEY_ASSIGNATURA_SIGLES + " TEXT NOT NULL," +
-                        KEY_ASSIGNATURA_NOM + " TEXT NOT NULL," +
-                        KEY_ASSIGNATURA_TEXT + " TEXT" +
+                KEY_ASSIGNATURA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                KEY_ASSIGNATURA_SIGLES + " TEXT NOT NULL," +
+                KEY_ASSIGNATURA_NOM + " TEXT NOT NULL," +
+                KEY_ASSIGNATURA_AULA + " TEXT NOT NULL," +
+                KEY_ASSIGNATURA_TEXT + " TEXT" +
                 ")";
         String CREATE_DIA_TABLE = "CREATE TABLE " + TAULA_DIA +
                 "(" +
-                        KEY_DIA_ID + " DATE PRIMARY KEY NOT NULL" +
+                KEY_DIA_ID + " DATE PRIMARY KEY NOT NULL" +
                 ")";
         String CREATE_IMPARTEIX_TABLE = "CREATE TABLE " + TAULA_IMPARTEIX +
                 "(" +
-                        KEY_IMPARTEIX_IDASSIGNATURA + " INTEGER NOT NULL," +
-                        KEY_IMPARTEIX_IDDIA + " DATE NOT NULL," +
-                        " CONSTRAINT Imparteix_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ", " + KEY_IMPARTEIX_IDDIA + ")," +
-                        " CONSTRAINT Imparteix_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")," +
-                        " CONSTRAINT Imparteix_Dia_data_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")" +
+                KEY_IMPARTEIX_IDASSIGNATURA + " INTEGER NOT NULL," +
+                KEY_IMPARTEIX_IDDIA + " DATE NOT NULL," +
+                " CONSTRAINT Imparteix_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ", " + KEY_IMPARTEIX_IDDIA + ")," +
+                " CONSTRAINT Imparteix_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")," +
+                " CONSTRAINT Imparteix_Dia_data_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")" +
                 ")";
         String CREATE_LLISTA_ASSISTENCIA_TABLE = "CREATE TABLE " + TAULA_LLISTA_ASSISTENCIA +
                 "(" +
-                        KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + "INTEGER NOT NULL," +
-                        KEY_LLISTA_ASSISTENCIA_IDDIA + " DATE NOT NULL," +
-                        " CONSTRAINT LlistaAssistencia_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ", " + KEY_LLISTA_ASSISTENCIA_IDDIA + ")," +
-                        " CONSTRAINT LlistaAssistencia_Dia_data_fk FOREIGN KEY (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")," +
-                        " CONSTRAINT LlistaAssistencia_Assignatura_idAssignatura_fk FOREIGN KEY ("  + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
+                KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + " INTEGER NOT NULL," +
+                KEY_LLISTA_ASSISTENCIA_IDDIA + " DATE NOT NULL," +
+                " CONSTRAINT LlistaAssistencia_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ", " + KEY_LLISTA_ASSISTENCIA_IDDIA + ")," +
+                " CONSTRAINT LlistaAssistencia_Dia_data_fk FOREIGN KEY (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")," +
+                " CONSTRAINT LlistaAssistencia_Assignatura_idAssignatura_fk FOREIGN KEY ("  + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
                 ")";
         String CREATE_MATRICULATS_TABLE = "CREATE TABLE " + TAULA_MATRICULATS +
                 "(" +
-                        KEY_MATRICULATS_IDALUMNE + " INTEGER NOT NULL," +
-                        KEY_MATRICULATS_IDASSIGNATURA + " INTEGER NOT NULL," +
-                        " CONSTRAINT Matriculats_idAlumne_idAssignatura_pk PRIMARY KEY (" + KEY_MATRICULATS_IDALUMNE + ", " + KEY_MATRICULATS_IDASSIGNATURA + ")," +
-                        " CONSTRAINT Matriculats_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_MATRICULATS_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + " (" + KEY_ALUMNE_ID + ")," +
-                        " CONSTRAINT Matriculats_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_MATRICULATS_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
+                KEY_MATRICULATS_IDALUMNE + " INTEGER NOT NULL," +
+                KEY_MATRICULATS_IDASSIGNATURA + " INTEGER NOT NULL," +
+                " CONSTRAINT Matriculats_idAlumne_idAssignatura_pk PRIMARY KEY (" + KEY_MATRICULATS_IDALUMNE + ", " + KEY_MATRICULATS_IDASSIGNATURA + ")," +
+                " CONSTRAINT Matriculats_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_MATRICULATS_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + " (" + KEY_ALUMNE_ID + ")," +
+                " CONSTRAINT Matriculats_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_MATRICULATS_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
                 ")";
         String CREATE_UNIQUE_SIGLES_INDEX = "CREATE UNIQUE INDEX Assignatura_sigles_uindex ON " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_SIGLES + ")";
 
@@ -154,17 +152,16 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion != newVersion){
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_ALUMNE);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_ASSIGNATURA);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_DIA);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_IMPARTEIX);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_MATRICULATS);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_APUNTAT);
-            db.execSQL("DROP TABLE IF EXISTS " + TAULA_LLISTA_ASSISTENCIA);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_ALUMNE);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_ASSIGNATURA);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_DIA);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_IMPARTEIX);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_MATRICULATS);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_APUNTAT);
+        db.execSQL("DROP TABLE IF EXISTS " + TAULA_LLISTA_ASSISTENCIA);
 
-            onCreate(db);
-        }
+        onCreate(db);
+
 
     }
 
@@ -214,10 +211,30 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void addAssignatura(Assignatura assignatura) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_ASSIGNATURA_NOM, assignatura.getNom());
+            values.put(KEY_ASSIGNATURA_AULA, assignatura.getAula());
+            values.put(KEY_ASSIGNATURA_SIGLES, assignatura.getSigles());
+
+            db.insertOrThrow(TAULA_ASSIGNATURA, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e){
+            Log.d(TAG, "Error intentant afegir una assignatura a la base de dades");
+            Log.d(TAG, e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public Cursor getAssignaturesCursor() {
-        String ALUMNE_SELECT_QUERY = String.format("SELECT * FROM %s", TAULA_ASSIGNATURA);
         SQLiteDatabase db = getReadableDatabase();
-        return db.rawQuery(ALUMNE_SELECT_QUERY, null);
+        String ASSIGNATURA_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ASSIGNATURA_ID,
+                TAULA_ASSIGNATURA);
+        return db.rawQuery(ASSIGNATURA_SELECT_QUERY, null);
     }
 
     private String getValue (Cursor c, String key) {
