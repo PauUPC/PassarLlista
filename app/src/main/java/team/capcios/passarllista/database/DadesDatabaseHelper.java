@@ -17,7 +17,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 
     //Table Names
     private static final String TAULA_ALUMNE = "Alumne";
@@ -84,6 +84,26 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
             addAssignatura(assignatura);
         }
     }
+
+    public void poblar_alumnes() {
+        for (int i=0; i<10; i++){
+            Alumne alumne = new Alumne("alumne.generic"+String.valueOf(i), "alumne.generic"+String.valueOf(i)+"@estudiant.upc.edu");
+            addAlumne(alumne);
+        }
+    }
+
+    public void poblar_matriculats() {
+        List<Alumne> alumneList = getAllAlumnes();
+        List<Assignatura> assignaturaList = getAllAssignatures();
+        if(assignaturaList.size() > 0) {
+            for(Alumne alumne:alumneList){
+                addMatriculat(alumne,assignaturaList.get(0));
+            }
+        } else {
+            Log.d(TAG,"No hi ha assignatures en la base de dades.");
+        }
+    }
+
 
     private void create_all_tables(SQLiteDatabase db) {
         String CREATE_ALUMNE_TABLE = "CREATE TABLE " + TAULA_ALUMNE +
@@ -180,6 +200,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                     alumne.setId(getValue(cursor,KEY_ALUMNE_ID));
                     alumne.setNom(getValue(cursor,KEY_ALUMNE_NOM));
                     alumne.setEmail(getValue(cursor,KEY_ALUMNE_MAIL));
+                    alumnes.add(alumne);
                 } while (cursor.moveToNext());
             }
 
@@ -191,6 +212,35 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 cursor.close();
         }
         return alumnes;
+    }
+
+    public List<Assignatura> getAllAssignatures() {
+        List<Assignatura> assignatures = new ArrayList<>();
+
+        //SELECT * FROM Alumne
+        String ASSIGNATURA_SELECT_QUERY = String.format("SELECT * FROM %s", TAULA_ASSIGNATURA);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(ASSIGNATURA_SELECT_QUERY, null);
+        try {
+            if(cursor.moveToFirst()){
+                do {
+                    Assignatura assignatura = new Assignatura();
+                    assignatura.setId(getValue(cursor,KEY_ASSIGNATURA_ID));
+                    assignatura.setNom(getValue(cursor,KEY_ASSIGNATURA_NOM));
+                    assignatura.setSigles(getValue(cursor,KEY_ASSIGNATURA_SIGLES));
+                    assignatura.setAula(getValue(cursor,KEY_ASSIGNATURA_AULA));
+                    assignatures.add(assignatura);
+                } while (cursor.moveToNext());
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "Error intentant obtenir les assignatures de la base de dades");
+            Log.d(TAG, e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+        return assignatures;
     }
 
     //Inserir un Alumne
@@ -206,6 +256,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e){
             Log.d(TAG, "Error intentant afegir un alumne a la base de dades");
+            Log.d(TAG, e.getMessage());
         } finally {
             db.endTransaction();
         }
@@ -230,6 +281,24 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void addMatriculat(Alumne alumne, Assignatura assignatura) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_MATRICULATS_IDALUMNE, alumne.getId());
+            values.put(KEY_MATRICULATS_IDASSIGNATURA, assignatura.getId());
+
+            db.insertOrThrow(TAULA_MATRICULATS, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e){
+            Log.d(TAG, "Error intentant afegir un matriculat a la base de dades");
+            Log.d(TAG, e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public Cursor getAssignaturesCursor() {
         SQLiteDatabase db = getReadableDatabase();
         String ASSIGNATURA_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ASSIGNATURA_ID,
@@ -237,7 +306,15 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(ASSIGNATURA_SELECT_QUERY, null);
     }
 
+    public Cursor getAlumnesCursor() {
+        SQLiteDatabase db = getReadableDatabase();
+        String ALUMNE_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ALUMNE_ID,
+                TAULA_ALUMNE);
+        return db.rawQuery(ALUMNE_SELECT_QUERY, null);
+    }
+
     private String getValue (Cursor c, String key) {
         return c.getString(c.getColumnIndex(key));
     }
+
 }

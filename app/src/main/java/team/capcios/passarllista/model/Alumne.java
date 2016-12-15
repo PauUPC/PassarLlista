@@ -21,6 +21,12 @@ public class Alumne implements Serializable {
         this.email = email;
     }
 
+    public Alumne(String nom, String email) {
+        this.id = "";
+        this.nom = nom;
+        this.email = email;
+    }
+
     public String getNom() {
         return nom;
     }
