@@ -8,14 +8,19 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import team.capcios.passarllista.MainActivity;
 import team.capcios.passarllista.R;
+import team.capcios.passarllista.activitys.AlumneCheckList;
+import team.capcios.passarllista.database.CustomCursor;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 
 public class AlumnesListCursorAdapter extends CursorAdapter {
 
-    public AlumnesListCursorAdapter(Context context, Cursor cursor) {
+    private AlumneCheckList.OnItemTouchListener onItemTouchListener;
+
+    public AlumnesListCursorAdapter(Context context, Cursor cursor,
+                                    AlumneCheckList.OnItemTouchListener onItemTouchListener) {
         super(context, cursor, 0);
+        this.onItemTouchListener = onItemTouchListener;
     }
 
     @Override
@@ -25,8 +30,17 @@ public class AlumnesListCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        final CustomCursor customCursor = new CustomCursor(cursor);
+
         TextView name = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_name);
         String title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
         name.setText(title);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemTouchListener.onClick(customCursor.cursorToAlumne());
+            }
+        });
     }
 }

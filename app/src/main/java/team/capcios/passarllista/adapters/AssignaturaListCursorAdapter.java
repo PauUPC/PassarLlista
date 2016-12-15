@@ -2,7 +2,6 @@ package team.capcios.passarllista.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +54,7 @@ public class AssignaturaListCursorAdapter extends CursorAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemTouchListener.onClick(customCursor.CursorToAssignatura());
+                onItemTouchListener.onClick(customCursor.cursorToAssignatura());
             }
         });
     }

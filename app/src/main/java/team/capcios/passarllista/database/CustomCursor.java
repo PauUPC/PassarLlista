@@ -3,6 +3,7 @@ package team.capcios.passarllista.database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import team.capcios.passarllista.model.Alumne;
 import team.capcios.passarllista.model.Assignatura;
 
 
@@ -15,7 +16,7 @@ public class CustomCursor extends CursorWrapper {
         this.cursor = cursor;
     }
 
-    public Assignatura CursorToAssignatura() {
+    public Assignatura cursorToAssignatura() {
         Assignatura assignatura = new Assignatura();
         try {
             String nom = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_NOM));
@@ -26,5 +27,18 @@ public class CustomCursor extends CursorWrapper {
             e.printStackTrace();
         }
         return assignatura;
+    }
+
+    public Alumne cursorToAlumne() {
+        Alumne alumne = new Alumne();
+        try {
+            String id = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_ID));
+            String nom = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));
+            alumne = new Alumne(id, nom, email);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return alumne;
     }
 }

@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences sharedPreferences;
     private ActivityLauncher activityLauncher;
     private MainActivity.OnItemTouchListener onItemTouchListener;
-    private final static int CODE_ALUMNE_CHECK_LIST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK && requestCode == CODE_ALUMNE_CHECK_LIST) {
+        if(resultCode==RESULT_OK && requestCode == Keys.CODE_ALUMNE_CHECK_LIST) {
             //TODO
         }
     }
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
     private void createObjects() {
         sharedPreferences = getSharedPreferences("team.capcios.passarllista", MODE_PRIVATE);
         dadesDatabaseHelper = new DadesDatabaseHelper(this);
-        activityLauncher = new ActivityLauncher(this, dadesDatabaseHelper);
+        activityLauncher = new ActivityLauncher(this);
     }
 
     private void createToolbar() {
@@ -144,7 +144,10 @@ public class MainActivity extends AppCompatActivity
         onItemTouchListener = new OnItemTouchListener() {
             @Override
             public void onClick(Assignatura assignatura) {
-
+                if(assignatura != null)
+                    activityLauncher.LaunchAlumneCheckList(assignatura);
+                else
+                    Log.d("MAIN", "Error onlcick assignatura is null");
             }
 
             @Override
@@ -163,23 +166,18 @@ public class MainActivity extends AppCompatActivity
         listView.setAdapter(assignaturaListCursorAdapter);
     }
 
-
-
     private class ActivityLauncher {
 
         private Context context;
-        private DadesDatabaseHelper dadesDatabaseHelper;
 
-        ActivityLauncher(Context context, DadesDatabaseHelper dadesDatabaseHelper) {
+        ActivityLauncher(Context context) {
             this.context = context;
-            this.dadesDatabaseHelper = dadesDatabaseHelper;
         }
 
-        public boolean LaunchAlumneCheckList(Assignatura assignatura){
+        void LaunchAlumneCheckList(Assignatura assignatura){
             Intent intent = new Intent(context, AlumneCheckList.class);
-            intent.putExtra("CLASSE", assignatura);
-            startActivityForResult(intent, CODE_ALUMNE_CHECK_LIST);
-            return true;
+            intent.putExtra(Keys.ASSIGNATURA_INTENT_KEY, assignatura);
+            startActivityForResult(intent, Keys.CODE_ALUMNE_CHECK_LIST);
         }
     }
 }
