@@ -1,30 +1,28 @@
 package team.capcios.passarllista.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by ALEJANDRO on 23/11/2016.
- */
-public class Dia {
+public class Dia implements Serializable {
     private Date date;
-    private List<Classe> classes;
+    private List<Assignatura> aClasses;
 
     public Dia(Date date) {
         this.date = date;
-        classes = new ArrayList<>();
+        aClasses = new ArrayList<>();
     }
 
-    public void addClasse(Classe classe){
-        classes.add(classe);
+    public void addClasse(Assignatura assignatura){
+        aClasses.add(assignatura);
     }
 
     public Date getDate() {
         return date;
     }
 
-    public List<Classe> getClasses() {
-        return classes;
+    public List<Assignatura> getaClasses() {
+        return aClasses;
     }
 }

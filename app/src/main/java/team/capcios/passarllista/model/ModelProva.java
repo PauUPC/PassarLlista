@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by ALEJANDRO on 23/11/2016.
- */
 public class ModelProva {
     public static HashMap<String, List<String>> getData(){
         HashMap<String, List<String>> expanStringListDetail = new HashMap<>();

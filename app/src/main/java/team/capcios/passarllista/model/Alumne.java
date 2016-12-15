@@ -2,10 +2,9 @@ package team.capcios.passarllista.model;
 
 import android.provider.ContactsContract;
 
-/**
- * Created by ALEJANDRO on 23/11/2016.
- */
-public class Alumne {
+import java.io.Serializable;
+
+public class Alumne implements Serializable {
     private String id;
     private String nom;
     private String email;

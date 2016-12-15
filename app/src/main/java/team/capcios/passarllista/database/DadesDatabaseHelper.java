@@ -22,7 +22,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     //Table Names
-    private static final String TAULA_ALUMNE = "Alumne";
+    public static final String TAULA_ALUMNE = "Alumne";
     public static final String TAULA_ASSIGNATURA = "Assignatura";
     private static final String TAULA_DIA = "Dia";
     private static final String TAULA_MATRICULATS = "Matriculats";
@@ -32,7 +32,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     //Taula Alumne Columnes
     private static final String KEY_ALUMNE_ID = "idAlumne";
-    private static final String KEY_ALUMNE_NOM = "nom";
+    public static final String KEY_ALUMNE_NOM = "nom";
     private static final String KEY_ALUMNE_MAIL = "mail";
 
     //Taula Assignatura Columnes

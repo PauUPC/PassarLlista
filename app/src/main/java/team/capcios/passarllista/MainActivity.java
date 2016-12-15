@@ -1,10 +1,10 @@
 package team.capcios.passarllista;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,8 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import team.capcios.passarllista.adapters.ListCursorAdapter;
+import team.capcios.passarllista.activitys.AlumneCheckList;
+import team.capcios.passarllista.adapters.AssignaturaListCursorAdapter;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
+import team.capcios.passarllista.model.Assignatura;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity
     private ListView listView;
     private Cursor listCursor;
     private DadesDatabaseHelper dadesDatabaseHelper;
+    private SharedPreferences sharedPreferences;
+    private ActivityLauncher activityLauncher;
+    private MainActivity.OnItemTouchListener onItemTouchListener;
+    private final static int CODE_ALUMNE_CHECK_LIST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +98,32 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sharedPreferences.getBoolean("firstrun", true)) {
+            //TODO inicialitzar database per primer cop
+            sharedPreferences.edit().putBoolean("firstrun", false).apply();
+        }
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK && requestCode == CODE_ALUMNE_CHECK_LIST) {
+            //TODO
+        }
+    }
+
+    public interface OnItemTouchListener {
+        void onClick(Assignatura assignatura);
+        void onLongClick(Assignatura assignatura);
+    }
+
     private void createObjects() {
+        sharedPreferences = getSharedPreferences("team.capcios.passarllista", MODE_PRIVATE);
         dadesDatabaseHelper = new DadesDatabaseHelper(this);
+        activityLauncher = new ActivityLauncher(this, dadesDatabaseHelper);
     }
 
     private void createToolbar() {
@@ -111,13 +141,44 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createListeners() {
+        onItemTouchListener = new OnItemTouchListener() {
+            @Override
+            public void onClick(Assignatura assignatura) {
 
+            }
+
+            @Override
+            public void onLongClick(Assignatura assignatura) {
+
+            }
+        };
     }
 
     private void createAdapter() {
         listCursor = dadesDatabaseHelper.getAssignaturesCursor();
         listView = (ListView) findViewById(R.id.ListView);
-        ListCursorAdapter listCursorAdapter = new ListCursorAdapter(this, listCursor);
-        listView.setAdapter(listCursorAdapter);
+        AssignaturaListCursorAdapter assignaturaListCursorAdapter =
+                new AssignaturaListCursorAdapter(this, listCursor, onItemTouchListener);
+        listView.setAdapter(assignaturaListCursorAdapter);
+    }
+
+
+
+    private class ActivityLauncher {
+
+        private Context context;
+        private DadesDatabaseHelper dadesDatabaseHelper;
+
+        ActivityLauncher(Context context, DadesDatabaseHelper dadesDatabaseHelper) {
+            this.context = context;
+            this.dadesDatabaseHelper = dadesDatabaseHelper;
+        }
+
+        public boolean LaunchAlumneCheckList(Assignatura assignatura){
+            Intent intent = new Intent(context, AlumneCheckList.class);
+            intent.putExtra("CLASSE", assignatura);
+            startActivityForResult(intent, CODE_ALUMNE_CHECK_LIST);
+            return true;
+        }
     }
 }

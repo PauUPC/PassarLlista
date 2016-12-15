@@ -1,12 +1,10 @@
 package team.capcios.passarllista.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by ALEJANDRO on 23/11/2016.
- */
-public class Classe {
+public class Assignatura implements Serializable {
     private String nom;
     private String sigles;
     private String aula;
@@ -14,14 +12,14 @@ public class Classe {
     // private Array de Dies de la setmana que s'imparteix la assignatura.
 
 
-    public Classe() {
+    public Assignatura() {
         this.nom = "";
         this.sigles = "";
         this.aula = "";
         this.alumnes = new ArrayList<>();
     }
 
-    public Classe(String nom, String sigles, String aula) {
+    public Assignatura(String nom, String sigles, String aula) {
         this.nom = nom;
         this.sigles = sigles;
         this.aula = aula;

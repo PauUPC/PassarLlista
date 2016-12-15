@@ -1,14 +1,12 @@
 package team.capcios.passarllista.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import team.capcios.passarllista.model.Dia;
 
-/**
- * Created by ALEJANDRO on 23/11/2016.
- */
-public class ConjuntDiesClasses {
+public class ConjuntDiesClasses implements Serializable {
     private List<Dia> diesClasses;
 
     public ConjuntDiesClasses() {
