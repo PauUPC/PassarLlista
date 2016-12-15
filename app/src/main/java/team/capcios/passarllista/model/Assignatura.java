@@ -58,4 +58,12 @@ public class Assignatura implements Serializable {
         public void setSigles(String sigles) {
             this.sigles = sigles;
         }
+
+        public String getId() {
+        return id;
+    }
+
+        public void setId(String id) {
+        this.id = id;
+    }
 }
