@@ -2,26 +2,22 @@ package team.capcios.passarllista.activitys;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import java.sql.Array;
-
 import team.capcios.passarllista.Keys;
-import team.capcios.passarllista.MainActivity;
 import team.capcios.passarllista.R;
 import team.capcios.passarllista.adapters.AlumnesListCursorAdapter;
+import team.capcios.passarllista.async.AsyncDbGetCursorAssignatura;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 import team.capcios.passarllista.model.Alumne;
 import team.capcios.passarllista.model.Assignatura;
 
-public class AlumneCheckList extends AppCompatActivity {
+public class AlumneCheckList extends AppCompatActivity
+        implements AsyncDbGetCursorAssignatura.AsyncDbGetCursorAssignaturaResponse {
 
     private Assignatura assignatura;
     private ListView alumnes;
@@ -38,7 +34,7 @@ public class AlumneCheckList extends AppCompatActivity {
         createObjects();
         createToolbar();
         createListeners();
-        createAdapter();
+        requestcursor();
     }
 
     @Override
@@ -66,6 +62,11 @@ public class AlumneCheckList extends AppCompatActivity {
     public void onBackPressed() {
         save();
         super.onBackPressed();
+    }
+
+    @Override
+    public void onFinishAsyncDbGetCursorAssignatura(Cursor cursor) {
+        createAdapter(cursor);
     }
 
     public interface OnItemTouchListener {
@@ -100,8 +101,13 @@ public class AlumneCheckList extends AppCompatActivity {
         };
     }
 
-    private void createAdapter() {
-        alumnesCursor = dadesDatabaseHelper.getAlumnesCursor(assignatura);
+    private void requestcursor(){
+        AsyncDbGetCursorAssignatura asyncDbGetCursorAssignatura =
+                new AsyncDbGetCursorAssignatura(this, dadesDatabaseHelper);
+        asyncDbGetCursorAssignatura.execute(assignatura);
+    }
+
+    private void createAdapter(Cursor alumnesCursor) {
         alumnes = (ListView) findViewById(R.id.ListViewAlumnes);
         AlumnesListCursorAdapter alumnesListCursorAdapter =
                 new AlumnesListCursorAdapter(this, alumnesCursor, onItemTouchListener);

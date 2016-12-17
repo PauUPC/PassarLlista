@@ -61,7 +61,6 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_APUNTAT_IDDIA = "idDia";
 
 
-
     public DadesDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
