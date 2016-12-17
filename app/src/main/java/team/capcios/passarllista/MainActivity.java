@@ -18,14 +18,15 @@ import android.widget.ListView;
 
 import team.capcios.passarllista.activitys.AlumneCheckList;
 import team.capcios.passarllista.adapters.AssignaturaListCursorAdapter;
+import team.capcios.passarllista.async.AsyncDbGetCursorGeneric;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 import team.capcios.passarllista.model.Assignatura;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        AsyncDbGetCursorGeneric.AsyncDbGetCursorGenericResponse {
 
     private ListView listView;
-    private Cursor listCursor;
     private DadesDatabaseHelper dadesDatabaseHelper;
     private SharedPreferences sharedPreferences;
     private ActivityLauncher activityLauncher;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity
         createObjects();
         createToolbar();
         createListeners();
-        createAdapter();
+        requestCursor();
     }
 
     @Override
@@ -117,6 +118,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onFinishAsyncDbGetCursorGeneric(Cursor cursor) {
+        createAdapter(cursor);
+    }
+
     public interface OnItemTouchListener {
         void onClick(Assignatura assignatura);
         void onLongClick(Assignatura assignatura);
@@ -159,8 +165,13 @@ public class MainActivity extends AppCompatActivity
         };
     }
 
-    private void createAdapter() {
-        listCursor = dadesDatabaseHelper.getAssignaturesCursor();
+    private void requestCursor(){
+        AsyncDbGetCursorGeneric asyncDbGetCursorGeneric =
+                new AsyncDbGetCursorGeneric(this, dadesDatabaseHelper);
+        asyncDbGetCursorGeneric.execute(Keys.ASYNC_KEY_ASSIGNATURA);
+    }
+
+    private void createAdapter(Cursor listCursor) {
         listView = (ListView) findViewById(R.id.ListView);
         AssignaturaListCursorAdapter assignaturaListCursorAdapter =
                 new AssignaturaListCursorAdapter(this, listCursor, onItemTouchListener);
