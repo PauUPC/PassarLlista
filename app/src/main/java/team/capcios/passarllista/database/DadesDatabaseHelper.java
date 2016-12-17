@@ -78,21 +78,21 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void poblar_assignatures() {
+    private void poblar_assignatures() {
         for (int i=0; i<10; i++){
             Assignatura assignatura = new Assignatura("Assignatura"+String.valueOf(i),"CL-"+String.valueOf(i),"A0"+String.valueOf(i));
             addAssignatura(assignatura);
         }
     }
 
-    public void poblar_alumnes() {
+    private void poblar_alumnes() {
         for (int i=0; i<10; i++){
             Alumne alumne = new Alumne("alumne.generic"+String.valueOf(i), "alumne.generic"+String.valueOf(i)+"@estudiant.upc.edu");
             addAlumne(alumne);
         }
     }
 
-    public void poblar_matriculats() {
+    private void poblar_matriculats() {
         List<Alumne> alumneList = getAllAlumnes();
         List<Assignatura> assignaturaList = getAllAssignatures();
         if(assignaturaList.size() > 0) {
@@ -104,6 +104,11 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void poblar(){
+        poblar_alumnes();
+        poblar_assignatures();
+        poblar_matriculats();
+    }
 
     private void create_all_tables(SQLiteDatabase db) {
         String CREATE_ALUMNE_TABLE = "CREATE TABLE " + TAULA_ALUMNE +
@@ -306,7 +311,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(ASSIGNATURA_SELECT_QUERY, null);
     }
 
-    public Cursor getAlumnesCursor() {
+    public Cursor getAlumnesCursor(Assignatura assignatura) {
         SQLiteDatabase db = getReadableDatabase();
         String ALUMNE_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ALUMNE_ID,
                 TAULA_ALUMNE);

@@ -102,7 +102,9 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         if (sharedPreferences.getBoolean("firstrun", true)) {
-            //TODO inicialitzar database per primer cop
+            if(dadesDatabaseHelper == null)
+                dadesDatabaseHelper= new DadesDatabaseHelper(this);
+            dadesDatabaseHelper.poblar();
             sharedPreferences.edit().putBoolean("firstrun", false).apply();
         }
     }
@@ -158,7 +160,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createAdapter() {
-        dadesDatabaseHelper.poblar_assignatures();
         listCursor = dadesDatabaseHelper.getAssignaturesCursor();
         listView = (ListView) findViewById(R.id.ListView);
         AssignaturaListCursorAdapter assignaturaListCursorAdapter =

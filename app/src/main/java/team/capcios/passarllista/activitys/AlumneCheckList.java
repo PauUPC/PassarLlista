@@ -101,11 +101,11 @@ public class AlumneCheckList extends AppCompatActivity {
     }
 
     private void createAdapter() {
-        //TODO get correct method // alumnesCursor = dadesDatabaseHelper. //
-//        alumnes = (ListView) findViewById(R.id.ListViewAlumnes);
+        alumnesCursor = dadesDatabaseHelper.getAlumnesCursor(assignatura);
+        alumnes = (ListView) findViewById(R.id.ListViewAlumnes);
         AlumnesListCursorAdapter alumnesListCursorAdapter =
                 new AlumnesListCursorAdapter(this, alumnesCursor, onItemTouchListener);
-//        alumnes.setAdapter(alumnesListCursorAdapter);
+        alumnes.setAdapter(alumnesListCursorAdapter);
     }
 
     private void save(){}
