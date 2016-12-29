@@ -12,12 +12,13 @@ import java.util.List;
 
 import team.capcios.passarllista.model.Alumne;
 import team.capcios.passarllista.model.Assignatura;
+import team.capcios.passarllista.model.Dia;
 
 public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     //Table Names
     private static final String TAULA_ALUMNE = "Alumne";
@@ -34,7 +35,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     public static final String KEY_ALUMNE_MAIL = "mail";
 
     //Taula Assignatura Columnes
-    private static final String KEY_ASSIGNATURA_ID = "idAssignatura";
+    public static final String KEY_ASSIGNATURA_ID = "idAssignatura";
     public static final String KEY_ASSIGNATURA_SIGLES = "sigles";
     public static final String KEY_ASSIGNATURA_NOM = "nom";
     public static final String KEY_ASSIGNATURA_AULA = "aula";
@@ -85,7 +86,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void poblar_alumnes() {
-        for (int i=0; i<10; i++){
+        for (int i=0; i<100; i++){
             Alumne alumne = new Alumne("alumne.generic"+String.valueOf(i), "alumne.generic"+String.valueOf(i)+"@estudiant.upc.edu");
             addAlumne(alumne);
         }
@@ -94,12 +95,11 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private void poblar_matriculats() {
         List<Alumne> alumneList = getAllAlumnes();
         List<Assignatura> assignaturaList = getAllAssignatures();
-        if(assignaturaList.size() > 0) {
-            for(Alumne alumne:alumneList){
-                addMatriculat(alumne,assignaturaList.get(0));
+        for(int i=0; i<assignaturaList.size();i++){
+            for(int j=0; j<alumneList.size()/assignaturaList.size();j++) {
+                addMatriculat(alumneList.get((alumneList.size()/assignaturaList.size())*i+j),assignaturaList.get(i));
+                //Log.d("RADIXAN", "j: " + alumneList.get((alumneList.size()/assignaturaList.size())*i+j).getId() + " - i:" + assignaturaList.get(i).getId());
             }
-        } else {
-            Log.d(TAG,"No hi ha assignatures en la base de dades.");
         }
     }
 
@@ -312,13 +312,29 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAlumnesCursor(Assignatura assignatura) {
         SQLiteDatabase db = getReadableDatabase();
-        String ALUMNE_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ALUMNE_ID,
-                TAULA_ALUMNE);
+//        String ALUMNE_SELECT_QUERY = String.format("SELECT %s as _id, * FROM %s", KEY_ALUMNE_ID,
+//                TAULA_ALUMNE);
+        String ALUMNE_SELECT_QUERY = String.format("SELECT " +
+                TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " as _id, " + TAULA_ALUMNE + "." + KEY_ALUMNE_NOM + ", " + TAULA_ALUMNE  + "." + KEY_ALUMNE_MAIL +
+                " FROM " + TAULA_MATRICULATS + " JOIN " + TAULA_ALUMNE +
+                " ON " + TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " = " + TAULA_MATRICULATS + "." + KEY_MATRICULATS_IDALUMNE +
+                " WHERE " + KEY_MATRICULATS_IDASSIGNATURA + " = %s", assignatura.getId());
+        return db.rawQuery(ALUMNE_SELECT_QUERY, null);
+    }
+
+    public Cursor getAlumnesAssistenceCursor(Assignatura assignatura, Dia dia) {
+        SQLiteDatabase db = getReadableDatabase();
+        String ALUMNE_SELECT_QUERY = String.format("SELECT " +
+                TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " as _id, " + TAULA_ALUMNE + "." + KEY_ALUMNE_NOM + ", " + TAULA_ALUMNE  + "." + KEY_ALUMNE_MAIL +
+                " FROM " + TAULA_APUNTAT + " JOIN " + TAULA_ALUMNE +
+                " ON " + TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " = " + TAULA_APUNTAT + "." + KEY_APUNTAT_IDALUMNE +
+                " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s & " + KEY_APUNTAT_IDDIA + " = %s", assignatura.getId(), dia.getDate());
         return db.rawQuery(ALUMNE_SELECT_QUERY, null);
     }
 
     private String getValue (Cursor c, String key) {
         return c.getString(c.getColumnIndex(key));
     }
+
 
 }

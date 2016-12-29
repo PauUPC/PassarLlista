@@ -23,6 +23,7 @@ public class CustomCursor extends CursorWrapper {
             String sigles = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_SIGLES));
             String aula = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_AULA));
             assignatura = new Assignatura(nom, sigles, aula);
+            assignatura.setId(cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_ID)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,7 +33,9 @@ public class CustomCursor extends CursorWrapper {
     public Alumne cursorToAlumne() {
         Alumne alumne = new Alumne();
         try {
-            String id = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_ID));
+            //TODO: Error comentat. Correcte referir-se al _id.
+            //String id = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_ID));
+            String id = cursor.getString(cursor.getColumnIndexOrThrow("_id"));
             String nom = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));
             alumne = new Alumne(id, nom, email);
