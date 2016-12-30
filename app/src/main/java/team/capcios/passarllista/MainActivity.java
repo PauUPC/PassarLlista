@@ -14,11 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import team.capcios.passarllista.activitys.AlumneCheckList;
 import team.capcios.passarllista.adapters.AssignaturaListCursorAdapter;
 import team.capcios.passarllista.async.AsyncDbGetCursorGeneric;
+import team.capcios.passarllista.database.CustomCursor;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 import team.capcios.passarllista.model.Assignatura;
 
@@ -30,7 +33,6 @@ public class MainActivity extends AppCompatActivity
     private DadesDatabaseHelper dadesDatabaseHelper;
     private SharedPreferences sharedPreferences;
     private ActivityLauncher activityLauncher;
-    private MainActivity.OnItemTouchListener onItemTouchListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,20 +151,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createListeners() {
-        onItemTouchListener = new OnItemTouchListener() {
-            @Override
-            public void onClick(Assignatura assignatura) {
-                if(assignatura != null)
-                    activityLauncher.LaunchAlumneCheckList(assignatura);
-                else
-                    Log.d("MAIN", "Error onlcick assignatura is null");
-            }
-
-            @Override
-            public void onLongClick(Assignatura assignatura) {
-
-            }
-        };
     }
 
     private void requestCursor(){
@@ -174,8 +162,16 @@ public class MainActivity extends AppCompatActivity
     private void createAdapter(Cursor listCursor) {
         listView = (ListView) findViewById(R.id.ListView);
         AssignaturaListCursorAdapter assignaturaListCursorAdapter =
-                new AssignaturaListCursorAdapter(this, listCursor, onItemTouchListener);
+                new AssignaturaListCursorAdapter(this, listCursor);
         listView.setAdapter(assignaturaListCursorAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) parent.getAdapter().getItem(position);
+                CustomCursor customCursor = new CustomCursor(cursor);
+                activityLauncher.LaunchAlumneCheckList(customCursor.cursorToAssignatura());
+            }
+        });
     }
 
     private class ActivityLauncher {

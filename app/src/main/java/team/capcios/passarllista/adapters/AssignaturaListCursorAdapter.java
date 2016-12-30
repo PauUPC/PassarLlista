@@ -13,19 +13,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import team.capcios.passarllista.MainActivity;
 import team.capcios.passarllista.R;
-import team.capcios.passarllista.database.CustomCursor;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 
 public class AssignaturaListCursorAdapter extends CursorAdapter {
 
-    private MainActivity.OnItemTouchListener onItemTouchListener;
-
-    public AssignaturaListCursorAdapter(Context context, Cursor cursor,
-                                        MainActivity.OnItemTouchListener onItemTouchListener) {
+    public AssignaturaListCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
-        this.onItemTouchListener = onItemTouchListener;
     }
 
     @Override
@@ -37,8 +31,6 @@ public class AssignaturaListCursorAdapter extends CursorAdapter {
     // such as setting the text on a TextView.
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
-        final CustomCursor customCursor = new CustomCursor(cursor);
-
         DateFormat df = new SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault());
         String date = df.format(Calendar.getInstance().getTime());
 
@@ -50,12 +42,5 @@ public class AssignaturaListCursorAdapter extends CursorAdapter {
 
         dateView.setText(date);
         titleView.setText(title);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemTouchListener.onClick(customCursor.cursorToAssignatura());
-            }
-        });
     }
 }
