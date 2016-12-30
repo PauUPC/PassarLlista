@@ -125,11 +125,6 @@ public class MainActivity extends AppCompatActivity
         createAdapter(cursor);
     }
 
-    public interface OnItemTouchListener {
-        void onClick(Assignatura assignatura);
-        void onLongClick(Assignatura assignatura);
-    }
-
     private void createObjects() {
         sharedPreferences = getSharedPreferences("team.capcios.passarllista", MODE_PRIVATE);
         dadesDatabaseHelper = new DadesDatabaseHelper(this);

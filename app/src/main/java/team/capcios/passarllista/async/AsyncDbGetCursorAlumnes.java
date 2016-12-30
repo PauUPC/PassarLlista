@@ -8,8 +8,8 @@ import team.capcios.passarllista.database.DadesDatabaseHelper;
 import team.capcios.passarllista.model.Assignatura;
 
 
-public class AsyncDbGetCursorAssignatura extends AsyncTask<Assignatura, Void, Cursor> {
-    private AsyncDbGetCursorAssignatura.AsyncDbGetCursorAssignaturaResponse
+public class AsyncDbGetCursorAlumnes extends AsyncTask<Assignatura, Void, Cursor> {
+    private AsyncDbGetCursorAlumnes.AsyncDbGetCursorAssignaturaResponse
             asyncDbGetCursorAssignaturaResponse = null;
     private DadesDatabaseHelper dadesDatabaseHelper;
 
@@ -17,9 +17,9 @@ public class AsyncDbGetCursorAssignatura extends AsyncTask<Assignatura, Void, Cu
         void onFinishAsyncDbGetCursorAssignatura(Cursor cursor);
     }
 
-    public AsyncDbGetCursorAssignatura(Activity listeningActivity, DadesDatabaseHelper dadesDatabaseHelper) {
+    public AsyncDbGetCursorAlumnes(Activity listeningActivity, DadesDatabaseHelper dadesDatabaseHelper) {
         asyncDbGetCursorAssignaturaResponse =
-                (AsyncDbGetCursorAssignatura.AsyncDbGetCursorAssignaturaResponse) listeningActivity;
+                (AsyncDbGetCursorAlumnes.AsyncDbGetCursorAssignaturaResponse) listeningActivity;
         this.dadesDatabaseHelper = dadesDatabaseHelper;
     }
 
