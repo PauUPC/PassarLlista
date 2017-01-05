@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import team.capcios.passarllista.model.Alumne;
@@ -330,6 +332,15 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 " ON " + TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " = " + TAULA_APUNTAT + "." + KEY_APUNTAT_IDALUMNE +
                 " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s & " + KEY_APUNTAT_IDDIA + " = %s", assignatura.getId(), dia.getDate());
         return db.rawQuery(ALUMNE_SELECT_QUERY, null);
+    }
+
+    public HashMap<String, Boolean> getAlumnesAssistenceMap(Assignatura assignatura, Dia dia) {
+        //string -> alumne id
+        return new HashMap<>();
+    }
+
+    public void saveAlumnesAssistenceMap(HashMap<String, Boolean> map){
+        //string -> alumne id
     }
 
     private String getValue (Cursor c, String key) {
