@@ -20,7 +20,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     //Table Names
     private static final String TAULA_ALUMNE = "Alumne";
@@ -336,11 +336,76 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     public HashMap<String, Boolean> getAlumnesAssistenceMap(Assignatura assignatura, Dia dia) {
         //string -> alumne id
-        return new HashMap<>();
+        HashMap<String, Boolean> map = new HashMap<>();
+        Cursor cursor = getAlumnesAssistenceCursor(assignatura,dia);
+        try {
+            if(cursor.moveToFirst()){
+                do {
+                    map.put(getValue(cursor,KEY_ALUMNE_ID),true);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Error intentant obtenir els alumnes assistents de la base de dades.");
+            Log.d(TAG, ""+e.getMessage());
+        } finally {
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+        }
+        return map;
     }
 
-    public void saveAlumnesAssistenceMap(HashMap<String, Boolean> map){
+    public void saveAlumnesAssistenceMap(HashMap<String, Boolean> map, Assignatura assignatura, Dia dia){
         //string -> alumne id
+        for (String alumne_key : map.keySet()) {
+            if (map.get(alumne_key)) {
+                //True: Ha assistit
+                insereixAssistent(alumne_key, assignatura, dia);
+            } else {
+                //False: No ha assistit
+                eliminaAssistent(alumne_key, assignatura, dia);
+            }
+        }
+    }
+
+    private void eliminaAssistent(String alumneKey, Assignatura assignatura, Dia dia) {
+        //Eliminar si existeix de la taula la assistencia del alumne.
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            //TODO: Revisar si aquest identificador és correcte
+            String where = KEY_APUNTAT_IDALUMNE + " = " + alumneKey + " AND " + KEY_APUNTAT_IDASSIGNATURA +
+                    " = " + assignatura.getId() + " AND " + KEY_APUNTAT_IDDIA + " = " + dia.getDate().toString();
+            int deletedElements = db.delete(TAULA_APUNTAT, where, null);
+            if (deletedElements >1)
+                Log.d(TAG,String.valueOf(deletedElements)+" alumnes eliminats, el valor hauria de ser 1.");
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error intentant afegir un alumne a la base de dades d'assistencia");
+            Log.d(TAG, ""+e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private void insereixAssistent(String alumneKey, Assignatura assignatura, Dia dia) {
+        //Afegir al alumne en la taula d'assistencia
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_APUNTAT_IDALUMNE, alumneKey);
+            values.put(KEY_APUNTAT_IDASSIGNATURA, assignatura.getId());
+            //TODO: Revisar si aquest identificador és correcte
+            values.put(KEY_APUNTAT_IDDIA, dia.getDate().toString());
+
+            db.insertOrThrow(TAULA_APUNTAT, null, values);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d(TAG, "Error intentant afegir un alumne a la base de dades d'assistencia");
+            Log.d(TAG, ""+e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
     }
 
     private String getValue (Cursor c, String key) {
