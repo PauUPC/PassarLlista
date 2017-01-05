@@ -144,7 +144,7 @@ public class AlumneCheckList extends AppCompatActivity
     }
 
     private void save(){
-        AsyncDbSaveAssistenciaMap async = new AsyncDbSaveAssistenciaMap(dadesDatabaseHelper);
+        AsyncDbSaveAssistenciaMap async = new AsyncDbSaveAssistenciaMap(dadesDatabaseHelper, assignatura, dia);
         async.execute(map);
         finish();
     }

@@ -15,11 +15,15 @@ import java.util.Locale;
 
 import team.capcios.passarllista.R;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
+import team.capcios.passarllista.model.Dia;
 
 public class AssignaturaListCursorAdapter extends CursorAdapter {
 
-    public AssignaturaListCursorAdapter(Context context, Cursor cursor) {
+    private Dia dia;
+
+    public AssignaturaListCursorAdapter(Context context, Cursor cursor, Dia dia) {
         super(context, cursor, 0);
+        this.dia = dia;
     }
 
     @Override
@@ -31,9 +35,8 @@ public class AssignaturaListCursorAdapter extends CursorAdapter {
     // such as setting the text on a TextView.
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
-        DateFormat df = new SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault());
-        String date = df.format(Calendar.getInstance().getTime());
-
+        DateFormat df = new SimpleDateFormat("EEE, MMM d, ''yyyy", Locale.getDefault());
+        String date = df.format(dia.getDate());
 
         TextView dateView = (TextView) view.findViewById(R.id.list_view_item_row_date);
         TextView titleView = (TextView) view.findViewById(R.id.list_view_item_row_title);

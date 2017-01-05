@@ -18,12 +18,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import team.capcios.passarllista.activitys.AlumneCheckList;
 import team.capcios.passarllista.adapters.AssignaturaListCursorAdapter;
 import team.capcios.passarllista.async.AsyncDbGetCursorGeneric;
 import team.capcios.passarllista.database.CustomCursor;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
 import team.capcios.passarllista.model.Assignatura;
+import team.capcios.passarllista.model.Dia;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private DadesDatabaseHelper dadesDatabaseHelper;
     private SharedPreferences sharedPreferences;
     private ActivityLauncher activityLauncher;
+    private Dia dia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +138,14 @@ public class MainActivity extends AppCompatActivity
         sharedPreferences = getSharedPreferences("team.capcios.passarllista", MODE_PRIVATE);
         dadesDatabaseHelper = new DadesDatabaseHelper(this);
         activityLauncher = new ActivityLauncher(this);
+
+        DateFormat df = new SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault());
+        String date = df.format(Calendar.getInstance().getTime());
+        try {
+            dia = new Dia(df.parse(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createToolbar() {
@@ -157,7 +174,7 @@ public class MainActivity extends AppCompatActivity
     private void createAdapter(Cursor listCursor) {
         listView = (ListView) findViewById(R.id.ListView);
         AssignaturaListCursorAdapter assignaturaListCursorAdapter =
-                new AssignaturaListCursorAdapter(this, listCursor);
+                new AssignaturaListCursorAdapter(this, listCursor, dia);
         listView.setAdapter(assignaturaListCursorAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -180,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         void LaunchAlumneCheckList(Assignatura assignatura){
             Intent intent = new Intent(context, AlumneCheckList.class);
             intent.putExtra(Keys.ASSIGNATURA_INTENT_KEY, assignatura);
+            intent.putExtra(Keys.DIA_INTENT_KEY, dia);
             startActivityForResult(intent, Keys.CODE_ALUMNE_CHECK_LIST);
         }
     }

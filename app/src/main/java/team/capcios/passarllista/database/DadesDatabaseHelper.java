@@ -8,9 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.view.View;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import team.capcios.passarllista.model.Alumne;
 import team.capcios.passarllista.model.Assignatura;
@@ -187,8 +190,6 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TAULA_LLISTA_ASSISTENCIA);
 
         onCreate(db);
-
-
     }
 
     //Obtenir tots els Alumnes
@@ -326,11 +327,15 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAlumnesAssistenceCursor(Assignatura assignatura, Dia dia) {
         SQLiteDatabase db = getReadableDatabase();
+
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String date = df.format(dia.getDate());
+
         String ALUMNE_SELECT_QUERY = String.format("SELECT " +
                 TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " as _id, " + TAULA_ALUMNE + "." + KEY_ALUMNE_NOM + ", " + TAULA_ALUMNE  + "." + KEY_ALUMNE_MAIL +
                 " FROM " + TAULA_APUNTAT + " JOIN " + TAULA_ALUMNE +
                 " ON " + TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " = " + TAULA_APUNTAT + "." + KEY_APUNTAT_IDALUMNE +
-                " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s & " + KEY_APUNTAT_IDDIA + " = %s", assignatura.getId(), dia.getDate());
+                " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s & " + KEY_APUNTAT_IDDIA + " = %s", assignatura.getId(), date);
         return db.rawQuery(ALUMNE_SELECT_QUERY, null);
     }
 
@@ -372,9 +377,11 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String date = df.format(dia.getDate());
             //TODO: Revisar si aquest identificador és correcte
             String where = KEY_APUNTAT_IDALUMNE + " = " + alumneKey + " AND " + KEY_APUNTAT_IDASSIGNATURA +
-                    " = " + assignatura.getId() + " AND " + KEY_APUNTAT_IDDIA + " = " + dia.getDate().toString();
+                    " = " + assignatura.getId() + " AND " + KEY_APUNTAT_IDDIA + " = " + date;
             int deletedElements = db.delete(TAULA_APUNTAT, where, null);
             if (deletedElements >1)
                 Log.d(TAG,String.valueOf(deletedElements)+" alumnes eliminats, el valor hauria de ser 1.");
@@ -392,11 +399,13 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String date = df.format(dia.getDate());
             ContentValues values = new ContentValues();
             values.put(KEY_APUNTAT_IDALUMNE, alumneKey);
             values.put(KEY_APUNTAT_IDASSIGNATURA, assignatura.getId());
             //TODO: Revisar si aquest identificador és correcte
-            values.put(KEY_APUNTAT_IDDIA, dia.getDate().toString());
+            values.put(KEY_APUNTAT_IDDIA, date);
 
             db.insertOrThrow(TAULA_APUNTAT, null, values);
             db.setTransactionSuccessful();
