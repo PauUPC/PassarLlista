@@ -35,13 +35,15 @@ import team.capcios.passarllista.model.Dia;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        AsyncDbGetCursorGeneric.AsyncDbGetCursorGenericResponse {
+        AsyncDbGetCursorGeneric.AsyncDbGetCursorGenericResponse,
+        datePicker.onDateChanged{
 
     private ListView listView;
     private DadesDatabaseHelper dadesDatabaseHelper;
     private SharedPreferences sharedPreferences;
     private ActivityLauncher activityLauncher;
     private Dia dia;
+    private datePicker datePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,19 +92,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        switch (id){
+            case R.id.nav_calendar:
+                datePicker.show(getFragmentManager(),"escolleix una data");
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -146,6 +139,9 @@ public class MainActivity extends AppCompatActivity
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        datePicker = new datePicker();
+        datePicker.datePickerSetListener(this);
     }
 
     private void createToolbar() {
@@ -184,6 +180,20 @@ public class MainActivity extends AppCompatActivity
                 activityLauncher.LaunchAlumneCheckList(customCursor.cursorToAssignatura());
             }
         });
+    }
+
+    @Override
+    public void setNewDate(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DATE, day);
+        cal.set(Calendar.HOUR_OF_DAY, day);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date date = cal.getTime();
+        dia = new Dia(date);
     }
 
     private class ActivityLauncher {
