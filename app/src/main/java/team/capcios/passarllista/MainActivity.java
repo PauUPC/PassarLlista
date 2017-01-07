@@ -140,8 +140,13 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
         datePicker = new datePicker();
-        datePicker.datePickerSetListener(this);
+        datePicker.datePickerSetListener(this, year, month, day);
     }
 
     private void createToolbar() {
@@ -194,6 +199,7 @@ public class MainActivity extends AppCompatActivity
         cal.set(Calendar.MILLISECOND, 0);
         Date date = cal.getTime();
         dia = new Dia(date);
+        requestCursor();
     }
 
     private class ActivityLauncher {
