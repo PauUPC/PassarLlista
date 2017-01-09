@@ -415,7 +415,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
             String date = df.format(dia.getDate());
             //TODO: Revisar si aquest identificador és correcte
             String where = KEY_APUNTAT_IDALUMNE + " = " + alumneKey + " AND " + KEY_APUNTAT_IDASSIGNATURA +
-                    " = " + assignatura.getId() + " AND " + KEY_APUNTAT_IDDIA + " = " + date;
+                    " = " + assignatura.getId() + " AND " + KEY_APUNTAT_IDDIA + " = \"" + date + "\"";
             int deletedElements = db.delete(TAULA_APUNTAT, where, null);
             if (deletedElements >1)
                 Log.d(TAG,String.valueOf(deletedElements)+" alumnes eliminats, el valor hauria de ser 1.");
