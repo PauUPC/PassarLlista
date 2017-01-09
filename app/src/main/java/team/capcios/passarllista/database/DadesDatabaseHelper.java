@@ -23,7 +23,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
 
     //Table Names
     private static final String TAULA_ALUMNE = "Alumne";
@@ -129,7 +129,9 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 KEY_APUNTAT_IDDIA + " TEXT NOT NULL," +
                 " CONSTRAINT Apuntat_idAlumne_idDia_idAssignatura_pk PRIMARY KEY (" + KEY_APUNTAT_IDALUMNE + ", " + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ")," +
                 " CONSTRAINT Apuntat_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_APUNTAT_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + "(" + KEY_ALUMNE_ID +")," +
-                " CONSTRAINT Apuntat_LlistaAssistencia_idDia_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_LLISTA_ASSISTENCIA + " (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ", " + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ")" +
+                " CONSTRAINT Apuntat_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + "(" + KEY_ASSIGNATURA_ID +")," +
+                " CONSTRAINT Apuntat_Dia_idDia_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ") REFERENCES " + TAULA_DIA + "(" + KEY_DIA_ID +")" +
+//                " CONSTRAINT Apuntat_LlistaAssistencia_idDia_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_LLISTA_ASSISTENCIA + " (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ", " + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ")" +
                 ")";
         String CREATE_ASSIGNATURA_TABLE = "CREATE TABLE " + TAULA_ASSIGNATURA +
                 "(" +
@@ -141,24 +143,24 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 ")";
         String CREATE_DIA_TABLE = "CREATE TABLE " + TAULA_DIA +
                 "(" +
-                KEY_DIA_ID + " DATE PRIMARY KEY NOT NULL" +
+                KEY_DIA_ID + " TEXT PRIMARY KEY NOT NULL" +
                 ")";
         String CREATE_IMPARTEIX_TABLE = "CREATE TABLE " + TAULA_IMPARTEIX +
                 "(" +
                 KEY_IMPARTEIX_IDASSIGNATURA + " INTEGER NOT NULL," +
-                KEY_IMPARTEIX_IDDIA + " DATE NOT NULL," +
+                KEY_IMPARTEIX_IDDIA + " TEXT NOT NULL," +
                 " CONSTRAINT Imparteix_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ", " + KEY_IMPARTEIX_IDDIA + ")," +
                 " CONSTRAINT Imparteix_Assignatura_idAssignatura_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")," +
                 " CONSTRAINT Imparteix_Dia_data_fk FOREIGN KEY (" + KEY_IMPARTEIX_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")" +
                 ")";
-        String CREATE_LLISTA_ASSISTENCIA_TABLE = "CREATE TABLE " + TAULA_LLISTA_ASSISTENCIA +
-                "(" +
-                KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + " INTEGER NOT NULL," +
-                KEY_LLISTA_ASSISTENCIA_IDDIA + " DATE NOT NULL," +
-                " CONSTRAINT LlistaAssistencia_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ", " + KEY_LLISTA_ASSISTENCIA_IDDIA + ")," +
-                " CONSTRAINT LlistaAssistencia_Dia_data_fk FOREIGN KEY (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")," +
-                " CONSTRAINT LlistaAssistencia_Assignatura_idAssignatura_fk FOREIGN KEY ("  + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
-                ")";
+//        String CREATE_LLISTA_ASSISTENCIA_TABLE = "CREATE TABLE " + TAULA_LLISTA_ASSISTENCIA +
+//                "(" +
+//                KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + " INTEGER NOT NULL," +
+//                KEY_LLISTA_ASSISTENCIA_IDDIA + " DATE NOT NULL," +
+//                " CONSTRAINT LlistaAssistencia_idAssignatura_idDia_pk PRIMARY KEY (" + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ", " + KEY_LLISTA_ASSISTENCIA_IDDIA + ")," +
+//                " CONSTRAINT LlistaAssistencia_Dia_data_fk FOREIGN KEY (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ") REFERENCES " + TAULA_DIA + " (" + KEY_DIA_ID + ")," +
+//                " CONSTRAINT LlistaAssistencia_Assignatura_idAssignatura_fk FOREIGN KEY ("  + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ") REFERENCES " + TAULA_ASSIGNATURA + " (" + KEY_ASSIGNATURA_ID + ")" +
+//                ")";
         String CREATE_MATRICULATS_TABLE = "CREATE TABLE " + TAULA_MATRICULATS +
                 "(" +
                 KEY_MATRICULATS_IDALUMNE + " INTEGER NOT NULL," +
@@ -174,7 +176,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_ASSIGNATURA_TABLE);
         db.execSQL(CREATE_DIA_TABLE);
         db.execSQL(CREATE_IMPARTEIX_TABLE);
-        db.execSQL(CREATE_LLISTA_ASSISTENCIA_TABLE);
+//        db.execSQL(CREATE_LLISTA_ASSISTENCIA_TABLE);
         db.execSQL(CREATE_MATRICULATS_TABLE);
         db.execSQL(CREATE_UNIQUE_SIGLES_INDEX);
     }
@@ -187,7 +189,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TAULA_IMPARTEIX);
         db.execSQL("DROP TABLE IF EXISTS " + TAULA_MATRICULATS);
         db.execSQL("DROP TABLE IF EXISTS " + TAULA_APUNTAT);
-        db.execSQL("DROP TABLE IF EXISTS " + TAULA_LLISTA_ASSISTENCIA);
+//        db.execSQL("DROP TABLE IF EXISTS " + TAULA_LLISTA_ASSISTENCIA);
 
         onCreate(db);
     }
@@ -336,7 +338,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " as _id, " + TAULA_ALUMNE + "." + KEY_ALUMNE_NOM + ", " + TAULA_ALUMNE  + "." + KEY_ALUMNE_MAIL +
                 " FROM " + TAULA_APUNTAT + " JOIN " + TAULA_ALUMNE +
                 " ON " + TAULA_ALUMNE + "." + KEY_ALUMNE_ID + " = " + TAULA_APUNTAT + "." + KEY_APUNTAT_IDALUMNE +
-                " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s & " + KEY_APUNTAT_IDDIA + " = %s", assignatura.getId(), date);
+                " WHERE " + KEY_APUNTAT_IDASSIGNATURA + " = %s AND " + KEY_APUNTAT_IDDIA + " = \"%s\"", assignatura.getId(), date);
         return db.rawQuery(ALUMNE_SELECT_QUERY, null);
     }
 
@@ -347,7 +349,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         try {
             if(cursor.moveToFirst()){
                 do {
-                    map.put(getValue(cursor,KEY_ALUMNE_ID),true);
+                    map.put(getValue(cursor,"_id"),true);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
@@ -383,9 +385,10 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
             String date = df.format(dia.getDate());
-            String where = KEY_DIA_ID + " = " + date;
-            cursor = db.rawQuery("SELECT COUNT(*) FROM " + TAULA_DIA + " WHERE " + where, null);
-            if (cursor.getCount() <= 0) {
+            String where = KEY_DIA_ID + " = \"" + date + "\"";
+            cursor = db.rawQuery("SELECT count(*) FROM " + TAULA_DIA + " WHERE " + where, null);
+            cursor.moveToFirst();
+            if (cursor.getInt(cursor.getColumnIndex("count(*)")) <= 0) {
                 ContentValues values = new ContentValues();
                 values.put(KEY_DIA_ID, date);
                 db.insertOrThrow(TAULA_DIA, null, values);
@@ -435,7 +438,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
             String date = df.format(dia.getDate());
             ContentValues values = new ContentValues();
             values.put(KEY_APUNTAT_IDALUMNE, alumneKey);
-            values.put(KEY_APUNTAT_IDASSIGNATURA, assignatura.getId());
+            values.put(KEY_APUNTAT_IDASSIGNATURA, Integer.valueOf(assignatura.getId()));
             //TODO: Revisar si aquest identificador és correcte
             values.put(KEY_APUNTAT_IDDIA, date);
 
