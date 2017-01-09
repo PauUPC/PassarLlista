@@ -34,7 +34,7 @@ public class CustomCursor extends CursorWrapper {
         Alumne alumne = new Alumne();
         try {
             //TODO: Error comentat. Correcte referir-se al _id.
-            //String id = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_ID));
+//            String id = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_ID));
             String id = cursor.getString(cursor.getColumnIndexOrThrow("_id"));
             String nom = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));

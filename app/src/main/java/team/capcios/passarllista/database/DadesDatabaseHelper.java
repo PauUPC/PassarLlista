@@ -23,7 +23,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     //Database info
     private static final String DATABASE_NAME = "DadesDatabase";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
 
     //Table Names
     private static final String TAULA_ALUMNE = "Alumne";
@@ -126,7 +126,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 "(" +
                 KEY_APUNTAT_IDALUMNE + " INTEGER NOT NULL," +
                 KEY_APUNTAT_IDASSIGNATURA + " INTEGER NOT NULL," +
-                KEY_APUNTAT_IDDIA + " DATE NOT NULL," +
+                KEY_APUNTAT_IDDIA + " TEXT NOT NULL," +
                 " CONSTRAINT Apuntat_idAlumne_idDia_idAssignatura_pk PRIMARY KEY (" + KEY_APUNTAT_IDALUMNE + ", " + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ")," +
                 " CONSTRAINT Apuntat_Alumne_idAlumne_fk FOREIGN KEY (" + KEY_APUNTAT_IDALUMNE + ") REFERENCES " + TAULA_ALUMNE + "(" + KEY_ALUMNE_ID +")," +
                 " CONSTRAINT Apuntat_LlistaAssistencia_idDia_idAssignatura_fk FOREIGN KEY (" + KEY_APUNTAT_IDDIA + ", " + KEY_APUNTAT_IDASSIGNATURA + ") REFERENCES " + TAULA_LLISTA_ASSISTENCIA + " (" + KEY_LLISTA_ASSISTENCIA_IDDIA + ", " + KEY_LLISTA_ASSISTENCIA_IDASSIGNATURA + ")" +
@@ -329,6 +329,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
         String date = df.format(dia.getDate());
 
         String ALUMNE_SELECT_QUERY = String.format("SELECT " +
@@ -361,6 +362,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     public void saveAlumnesAssistenceMap(HashMap<String, Boolean> map, Assignatura assignatura, Dia dia){
         //string -> alumne id
+        checkForDia(dia);
         for (String alumne_key : map.keySet()) {
             if (map.get(alumne_key)) {
                 //True: Ha assistit
@@ -372,12 +374,41 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    private void checkForDia(Dia dia) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        Cursor cursor = null;
+
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            String date = df.format(dia.getDate());
+            String where = KEY_DIA_ID + " = " + date;
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + TAULA_DIA + " WHERE " + where, null);
+            if (cursor.getCount() <= 0) {
+                ContentValues values = new ContentValues();
+                values.put(KEY_DIA_ID, date);
+                db.insertOrThrow(TAULA_DIA, null, values);
+            }
+        } catch (Exception e){
+            Log.d(TAG, "Error intentant afegir un dia a la base de dades");
+            Log.d(TAG, e.getMessage());
+        } finally {
+            db.setTransactionSuccessful();
+            if (cursor != null && !cursor.isClosed())
+                cursor.close();
+            db.endTransaction();
+        }
+
+    }
+
     private void eliminaAssistent(String alumneKey, Assignatura assignatura, Dia dia) {
         //Eliminar si existeix de la taula la assistencia del alumne.
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
             String date = df.format(dia.getDate());
             //TODO: Revisar si aquest identificador és correcte
             String where = KEY_APUNTAT_IDALUMNE + " = " + alumneKey + " AND " + KEY_APUNTAT_IDASSIGNATURA +
@@ -387,7 +418,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
                 Log.d(TAG,String.valueOf(deletedElements)+" alumnes eliminats, el valor hauria de ser 1.");
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d(TAG, "Error intentant afegir un alumne a la base de dades d'assistencia");
+            Log.d(TAG, "Error intentant eliminar un alumne a la base de dades d'assistencia");
             Log.d(TAG, ""+e.getMessage());
         } finally {
             db.endTransaction();
@@ -400,6 +431,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
             String date = df.format(dia.getDate());
             ContentValues values = new ContentValues();
             values.put(KEY_APUNTAT_IDALUMNE, alumneKey);
