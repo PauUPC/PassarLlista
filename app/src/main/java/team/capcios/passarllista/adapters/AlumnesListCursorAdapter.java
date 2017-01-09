@@ -13,11 +13,22 @@ import team.capcios.passarllista.R;
 import team.capcios.passarllista.activitys.AlumneCheckList;
 import team.capcios.passarllista.database.CustomCursor;
 import team.capcios.passarllista.database.DadesDatabaseHelper;
+import team.capcios.passarllista.model.Alumne;
 
 public class AlumnesListCursorAdapter extends CursorAdapter {
 
-    public AlumnesListCursorAdapter(Context context, Cursor cursor) {
+    Cursor cursor;
+    int checked;
+    int unChecked;
+    AlumneCheckList.getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly;
+
+    public AlumnesListCursorAdapter(Context context, Cursor cursor,
+                                    AlumneCheckList.getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly) {
         super(context, cursor, 0);
+        this.cursor = cursor;
+        this.checked = context.getResources().getColor(R.color.alumneChecked);
+        this.unChecked = context.getResources().getColor(R.color.alumneUnchecked);
+        this.getAlumneAssistenceToDispaly = getAlumneAssistenceToDispaly;
     }
 
     @Override
@@ -30,6 +41,14 @@ public class AlumnesListCursorAdapter extends CursorAdapter {
         TextView name = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_name);
         String title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
         name.setText(title);
-    }
 
+        CustomCursor customCursor = new CustomCursor(cursor);
+        Alumne alumne = customCursor.cursorToAlumne();
+        boolean eval = getAlumneAssistenceToDispaly.getAlumneAssistence(alumne.getId());
+        if(eval){
+            view.setBackgroundColor(checked);
+        } else {
+            view.setBackgroundColor(unChecked);
+        }
+    }
 }

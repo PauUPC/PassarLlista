@@ -91,7 +91,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void poblar_alumnes() {
-        for (int i=0; i<100; i++){
+        for (int i=0; i<200; i++){
             Alumne alumne = new Alumne("alumne.generic"+String.valueOf(i), "alumne.generic"+String.valueOf(i)+"@estudiant.upc.edu");
             addAlumne(alumne);
         }

@@ -36,7 +36,7 @@ import team.capcios.passarllista.model.Dia;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         AsyncDbGetCursorGeneric.AsyncDbGetCursorGenericResponse,
-        datePicker.onDateChanged{
+        datePicker.onDateChanged {
 
     private ListView listView;
     private DadesDatabaseHelper dadesDatabaseHelper;

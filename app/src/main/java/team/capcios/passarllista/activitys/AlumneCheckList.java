@@ -1,6 +1,8 @@
 package team.capcios.passarllista.activitys;
 
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
@@ -41,7 +44,11 @@ public class AlumneCheckList extends AppCompatActivity
     private int unChecked;
     private HashMap<String, Boolean> map;
     AlumnesListCursorAdapter alumnesListCursorAdapter;
+    getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly;
 
+    public interface getAlumneAssistenceToDispaly {
+        boolean getAlumneAssistence(String id);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +58,6 @@ public class AlumneCheckList extends AppCompatActivity
         createObjects();
         createToolbar();
         createListeners();
-        requestcursor();
     }
 
     @Override
@@ -89,9 +95,17 @@ public class AlumneCheckList extends AppCompatActivity
         dadesDatabaseHelper = new DadesDatabaseHelper(this);
         assignatura =  (Assignatura) getIntent().getSerializableExtra(Keys.ASSIGNATURA_INTENT_KEY);
         dia = (Dia) getIntent().getSerializableExtra(Keys.DIA_INTENT_KEY);
+        getAlumneAssistenceToDispaly = new getAlumneAssistenceToDispaly() {
+            @Override
+            public boolean getAlumneAssistence(String id) {
+                Boolean eval = map.get(id);
+                return (eval != null) && eval;
+            }
+        };
         checked = getResources().getColor(R.color.alumneChecked);
         unChecked = getResources().getColor(R.color.alumneUnchecked);
         map = new HashMap<>();
+        getAssistencia();
     }
 
     private void createToolbar() {
@@ -112,7 +126,7 @@ public class AlumneCheckList extends AppCompatActivity
 
     private void createAdapter(Cursor alumnesCursor) {
         alumnes = (ListView) findViewById(R.id.ListViewAlumnes);
-        alumnesListCursorAdapter = new AlumnesListCursorAdapter(this, alumnesCursor);
+        alumnesListCursorAdapter = new AlumnesListCursorAdapter(this, alumnesCursor, getAlumneAssistenceToDispaly);
         alumnes.setAdapter(alumnesListCursorAdapter);
         alumnes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,10 +149,10 @@ public class AlumneCheckList extends AppCompatActivity
                     view.setBackgroundColor(checked);
             }
         });
-        setAssistencia();
+
     }
 
-    private void setAssistencia() {
+    private void getAssistencia() {
         AsyncDbGetAssistenciaMap async = new AsyncDbGetAssistenciaMap(this, dadesDatabaseHelper);
         async.execute(new Pair<>(assignatura, dia));
     }
@@ -151,19 +165,9 @@ public class AlumneCheckList extends AppCompatActivity
 
     @Override
     public void onFinishAsyncDbGetAssistenciaMap(HashMap map) {
-        View view;
-        Cursor cursor;
-        Alumne alumne;
-
-        for(int i=0; i < alumnes.getCount(); i++){
-            view = alumnes.getAdapter().getView(i, null, alumnes);
-            cursor = (Cursor) alumnes.getAdapter().getItem(i);
-            CustomCursor customCursor = new CustomCursor(cursor);
-            alumne = customCursor.cursorToAlumne();
-            Boolean eval = (Boolean) map.get(alumne.getId());
-            if((eval != null) && eval) {
-                view.setBackgroundColor(checked);
-            }
-        }
+        this.map = map;
+        if (map == null)
+            this.map = new HashMap();
+        requestcursor();
     }
 }
