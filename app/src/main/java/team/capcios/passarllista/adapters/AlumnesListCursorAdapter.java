@@ -42,6 +42,10 @@ public class AlumnesListCursorAdapter extends CursorAdapter {
         String title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
         name.setText(title);
 
+        TextView email = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_email);
+        String mail = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));
+        email.setText(mail);
+
         CustomCursor customCursor = new CustomCursor(cursor);
         Alumne alumne = customCursor.cursorToAlumne();
         boolean eval = getAlumneAssistenceToDispaly.getAlumneAssistence(alumne.getId());

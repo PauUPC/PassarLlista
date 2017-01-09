@@ -85,7 +85,7 @@ public class DadesDatabaseHelper extends SQLiteOpenHelper {
 
     private void poblar_assignatures() {
         for (int i=0; i<10; i++){
-            Assignatura assignatura = new Assignatura("Assignatura"+String.valueOf(i),"CL-"+String.valueOf(i),"A0"+String.valueOf(i));
+            Assignatura assignatura = new Assignatura("Assignatura"+String.valueOf(i),"Sigles-"+String.valueOf(i),"A0"+String.valueOf(i));
             addAssignatura(assignatura);
         }
     }

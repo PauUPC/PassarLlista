@@ -7,20 +7,11 @@
     android:orientation="vertical"
     android:id="@+id/list_view_item_row_layout">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/list_view_item_row_date"
-        tools:text="12-12-2012"
-        android:textAppearance="@android:style/TextAppearance.Material.Large"
-        android:layout_weight="1"
-        android:textAlignment="center"
-        android:textStyle="normal|bold" />
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp">
 
         <TextView
             android:layout_width="0dp"
@@ -29,7 +20,26 @@
             tools:text="Asignatura"
             android:textAppearance="@android:style/TextAppearance.Material.Large"
             android:layout_weight="1"
-            android:textAlignment="viewStart" />
+            android:textAlignment="viewStart"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_view_item_row_date"
+            tools:text="12-12-2012"
+            android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:textAlignment="center"
+            android:textStyle="normal|bold" />
+
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_view_item_row_aula"
+        android:layout_weight="1"
+        tools:text="aula "
+        android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
 </LinearLayout>
