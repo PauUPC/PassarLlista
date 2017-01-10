@@ -16,7 +16,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import team.capcios.passarllista.Keys;
@@ -111,7 +114,9 @@ public class AlumneCheckList extends AppCompatActivity
     private void createToolbar() {
         toolbar = (Toolbar) findViewById(R.id.alumnes_list_toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_clear_black_24dp);
-        toolbar.setTitle("Alumnes");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String date = df.format(dia.getDate());
+        toolbar.setTitle(assignatura.getSigles() + " " + date);
         setSupportActionBar(toolbar);
     }
 
