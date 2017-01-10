@@ -20,6 +20,13 @@ import team.capcios.passarllista.model.Dia;
 public class AssignaturaListCursorAdapter extends CursorAdapter {
 
     private Dia dia;
+    private DateFormat df;
+    private String date;
+    private TextView dateView;
+    private TextView titleView;
+    private TextView aulaView;
+    private String title;
+    private String aula;
 
     public AssignaturaListCursorAdapter(Context context, Cursor cursor, Dia dia) {
         super(context, cursor, 0);
@@ -35,15 +42,15 @@ public class AssignaturaListCursorAdapter extends CursorAdapter {
     // such as setting the text on a TextView.
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
-        DateFormat df = new SimpleDateFormat("EEE, dd-MM-yyyy", Locale.getDefault());
-        String date = df.format(dia.getDate());
+        df = new SimpleDateFormat("EEE, dd-MM-yyyy", Locale.getDefault());
+        date = df.format(dia.getDate());
 
-        TextView dateView = (TextView) view.findViewById(R.id.list_view_item_row_date);
-        TextView titleView = (TextView) view.findViewById(R.id.list_view_item_row_title);
-        TextView aulaView = (TextView) view.findViewById(R.id.list_view_item_row_aula);
+        dateView = (TextView) view.findViewById(R.id.list_view_item_row_date);
+        titleView = (TextView) view.findViewById(R.id.list_view_item_row_title);
+        aulaView = (TextView) view.findViewById(R.id.list_view_item_row_aula);
 
-        String title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_SIGLES));
-        String aula = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_AULA));
+        title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_SIGLES));
+        aula = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ASSIGNATURA_AULA));
 
         dateView.setText(date);
         titleView.setText(title);

@@ -2,7 +2,6 @@ package team.capcios.passarllista.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,17 @@ import team.capcios.passarllista.model.Alumne;
 
 public class AlumnesListCursorAdapter extends CursorAdapter {
 
-    Cursor cursor;
-    int checked;
-    int unChecked;
-    AlumneCheckList.getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly;
+    private Cursor cursor;
+    private int checked;
+    private int unChecked;
+    private AlumneCheckList.getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly;
+    private TextView name;
+    private String title;
+    private TextView email;
+    private String mail;
+    private Alumne alumne;
+    private CustomCursor customCursor;
+    private boolean eval;
 
     public AlumnesListCursorAdapter(Context context, Cursor cursor,
                                     AlumneCheckList.getAlumneAssistenceToDispaly getAlumneAssistenceToDispaly) {
@@ -38,17 +44,17 @@ public class AlumnesListCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(final View view, Context context, Cursor cursor) {
-        TextView name = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_name);
-        String title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
+        name = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_name);
+        title = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_NOM));
         name.setText(title);
 
-        TextView email = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_email);
-        String mail = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));
+        email = (TextView) view.findViewById(R.id.alumnes_list_view_item_row_email);
+        mail = cursor.getString(cursor.getColumnIndexOrThrow(DadesDatabaseHelper.KEY_ALUMNE_MAIL));
         email.setText(mail);
 
-        CustomCursor customCursor = new CustomCursor(cursor);
-        Alumne alumne = customCursor.cursorToAlumne();
-        boolean eval = getAlumneAssistenceToDispaly.getAlumneAssistence(alumne.getId());
+        customCursor = new CustomCursor(cursor);
+        alumne = customCursor.cursorToAlumne();
+        eval = getAlumneAssistenceToDispaly.getAlumneAssistence(alumne.getId());
         if(eval){
             view.setBackgroundColor(checked);
         } else {
